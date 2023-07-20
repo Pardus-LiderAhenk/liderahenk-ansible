@@ -1,0 +1,15 @@
+[db_server]
+192.168.56.136
+
+[file_server]
+192.168.56.135
+
+[db_server:vars]
+ansible_ssh_user=test
+ansible_become=true
+ansible_become_pass=1
+
+[file_server:vars]
+ansible_ssh_user=test
+ansible_become=true
+ansible_become_pass=1
