@@ -1,0 +1,5 @@
+- name: Change file ownership, group and permissions
+  ansible.builtin.file:
+    path: "/tmp/{{ dosya_adi }}"
+    state: directory
+    mode: '0755'

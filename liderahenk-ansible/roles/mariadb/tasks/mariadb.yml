@@ -1,0 +1,191 @@
+- name: Create root's .my.cnf file
+  copy:
+    content: |
+      [client]
+      user=root
+      password=1
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: MariaDB | Preset root password
+  debconf:
+    name: 'mariadb-server'
+    question: 'mariadb-server/root_password'
+    value: '<ROOT_PASSWORD>'
+    vtype: password
+  vars:
+    ROOT_PASSWORD: "1"
+
+- name: Install MariaDB package
+  apt:
+    name:
+      - mariadb-server
+      - python3-mysqldb
+    state: present
+
+- name: Print message
+  debug:
+    msg: "mariadb-server is installed"
+
+- name: Create Mysql configuration file
+  copy:
+    src: templates/my.cnf.j2
+    dest: /root/my.cnf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Comment out bind-address in 50-server.cnf
+  ansible.builtin.lineinfile:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: '^bind-address'
+    line: '#bind-address            = 127.0.0.1'
+    backup: yes
+  become: true
+
+- name: Start MariaDB Service
+  service:
+    name: mariadb
+    state: started
+    enabled: yes
+
+- name: Print message
+  debug:
+    msg: "mariadb-server service is started"
+
+- name: Create a new database with name 'lidermysdb'
+  community.mysql.mysql_db:
+    name: lidermysdb
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+
+- name: Create database user with name 'AGAH' and password '12345' with all database privileges
+  community.mysql.mysql_user:
+    name: root
+    password: "1"
+    priv: "*.*:ALL,GRANT"
+    host: '%'
+    state: present
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_user: root
+    
+
+
+- name: Start MariaDB Service
+  service:
+    name: mariadb
+    state: restarted
+    enabled: yes
+
+- name: Print message
+  debug:
+    msg: "mariadb-server service is started"
+
+
+- name: Select query to lidermysdb 
+  community.mysql.mysql_query:
+    login_db: lidermysdb
+    query: CREATE TABLE c_config (config_id INT NOT NULL, create_date VARCHAR(45) NOT NULL, modify_date VARCHAR(45) NULL, name VARCHAR(45) NOT NULL, value LONGTEXT NULL, PRIMARY KEY (config_id))
+
+- name: Select query to test_db with named_args
+  community.mysql.mysql_query:
+    login_db: lidermysdb
+    query: >
+      INSERT INTO c_config (config_id, create_date, modify_date, name, value)
+      VALUES (1, "2022-11-18 15:59:41", null, "liderConfigParams", '{{ json_data | to_json }}');
+
+  vars:
+    json_data:
+      liderLocale: "tr"
+      ldapServer: "161.9.194.152"
+      ldapPort: "389"
+      ldapUsername: "cn=admin,dc=liderahenk,dc=org"
+      ldapPassword: "1"
+      ldapRootDn: "dc=liderahenk,dc=org"
+      ldapUseSsl: "false"
+      ldapSearchAttributes: "cn,objectClass,uid,liderPrivilege"
+      ldapAllowSelfSignedCert: "false"
+      ldapMailNotifierAttributes: "cn, mail, departmentNumber, uid"
+      ldapEmailAttribute: "mail"
+      agentLdapBaseDn: "ou=Agents,dc=liderahenk,dc=org"
+      agentLdapIdAttribute: "cn"
+      agentLdapJidAttribute: "uid"
+      agentLdapObjectClasses: "pardusDevice,device"
+      userLdapBaseDn: "ou=Users,dc=liderahenk,dc=org"
+      userLdapUidAttribute: "uid"
+      userLdapPrivilegeAttribute: "liderPrivilege"
+      userLdapObjectClasses: "pardusAccount,pardusLider"
+      userAuthorizationEnabled: "true"
+      groupLdapObjectClasses: "groupOfNames"
+      roleLdapObjectClasses: "sudoRole"
+      userLdapRolesDn: "ou=Role,ou=Groups,dc=liderahenk,dc=org"
+      groupLdapBaseDn: "ou=Groups,dc=liderahenk,dc=org"
+      userGroupLdapBaseDn: "ou=User,ou=Groups,dc=liderahenk,dc=org"
+      ahenkGroupLdapBaseDn: "ou=Agent,ou=Groups,dc=liderahenk,dc=org"
+      xmppHost: "161.9.194.152"
+      xmppPort: "5222"
+      xmppUsername: "lider_sunucu"
+      xmppPassword: "1"
+      xmppResource: "Smack"
+      xmppServiceName: "im.liderahenk.org"
+      xmppMaxRetryConnectionCount: "7"
+      xmppPacketReplayTimeout: "10000"
+      xmppPingTimeout: "300"
+      xmppUseSsl: "false"
+      xmppAllowSelfSignedCert: "false"
+      xmppUseCustomSsl: "false"
+      xmppPresencePriority: "1"
+      xmppBoshAddress: "http://161.9.194.152:5280/bosh"
+      fileServerProtocol: "SSH"
+      fileServerHost: "161.9.194.152"
+      fileServerUsername: "pardus"
+      fileServerPassword: "123123qwe"
+      fileServerPluginPath: "/home/pardus/plugins/ahenk-{0}_{1}_amd64.deb"
+      fileServerAgreementPath: "/home/pardus/sample-agreement.txt"
+      fileServerAgentFilePath: "/home/pardus/agent-files/{0}/"
+      fileServerUrl: "null"
+      fileServerPort: "22"
+      taskManagerCheckFutureTask: "null"
+      taskManagerFutureTaskCheckPeriod: "null"
+      alarmCheckReport: "null"
+      mailAddress: "liderahenk.mys@gmail.com"
+      mailPassword: "rKSyBHa29fE6S"
+      mailHost: "smtp.gmail.com"
+      mailSmtpPort: "587"
+      mailSmtpAuth: "true"
+      mailSmtpStartTlsEnable: "true"
+      mailSmtpSslEnable: "null"
+      mailSmtpConnTimeout: "null"
+      mailSmtpTimeout: "null"
+      mailSmtpWriteTimeout: "null"
+      mailSendOnTaskCompletion: "null"
+      mailCheckTaskCompletionPeriod: "null"
+      mailSendOnPolicyCompletion: "null"
+      mailCheckPolicyCompletionPeriod: "null"
+      hotDeploymentPath: "null"
+      cronTaskList: "null"
+      entrySizeLimit: "null"
+      cronIntervalEntrySize: "null"
+      adDomainName: "lawad.local"
+      adHostName: "lawad.lawad.local"
+      adIpAddress: "161.9.194.156"
+      adAdminUserName: "Administrator"
+      adAdminUserFullDN: "cn=Administrator,cn=Users,dc=lawad,dc=local"
+      adAdminPassword: "Passw0rd"
+      adPort: "389"
+      adUseSSL: "false"
+      adUseTLS: "true"
+      adAllowSelfSignedCert: "true"
+      allowDynamicDNSUpdate: "true"
+      disableLocalUser: "false"
+      domainType: "LDAP"
+      sudoRoleType: "LDAP"
+      ahenkRepoAddress: "null"
+      ahenkRepoKeyAddress: "null"
+      allowVNCConnectionWithoutPermission: "true"
+      pardusRepoAddress: "http://depo.pardus.org.tr/pardus"
+      pardusRepoComponent: "yirmibir main contrib non-free"
+      enableDelete4Directory: "null"
+      selectedRegistrationType: "HOSTNAME"
