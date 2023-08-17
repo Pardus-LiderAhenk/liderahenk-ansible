@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: [file_server]
   remote_user: root
   roles:
     - kodekloud.mysql

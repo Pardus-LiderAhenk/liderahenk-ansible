@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# Get the folder name as a parameter
+asd="{{ foldername }}"
+
+# Create the folder
+mkdir "/tmp/$asd"
+
+# Write some content to a file inside the folder using a variable
+echo "Hello, this is a file created with the folder name: $asd" > "/tmp/$asd/file.txt"

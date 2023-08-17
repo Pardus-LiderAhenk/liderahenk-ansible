@@ -1,0 +1,23 @@
+#!/bin/bash
+
+## BURAYA BAK CNAME YEMEDİD GİBİ
+
+DBPATH=/var/ldaps/{{ CNAME }}
+
+# LASTDBCOUNT=`ldapsearch -LLL -x -s sub -D "$CNCONFIGADMINDN" -w $CNCONFIGADMINPASSWD -b "cn=config" "(olcDatabase=*)" | egrep -o "dn: olcDatabase={([0-9]+)}mdb" | tac | egrep -o -m1 "[0-9]+"`
+# CURDBNO=`expr $LASTDBCOUNT + 1`
+
+systemctl restart slapd.service
+# password for cn=admin,cn=config
+
+NEW_CONFIG_PASSWD=$(slappasswd -h {SSHA} -s $CNCONFIGADMINPASSWD)
+NEW_ADMIN_PASSWD=$(slappasswd -h {SSHA} -s $ADMINPASSWD)
+
+if [ -d "$DBPATH" ]; then
+    echo "ERROR: Directory $DBPATH already exists!" 1>&2
+    exit 0
+fi
+
+mkdir -p $DBPATH
+chmod 755 $DBPATH
+chown openldap:openldap $DBPATH

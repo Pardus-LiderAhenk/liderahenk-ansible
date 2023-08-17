@@ -1,0 +1,77 @@
+- name: LDAP installation start
+  debug:
+    msg: "Start with main installation"
+
+- name: LDAP installation start
+  debug:
+    msg: "Start with ldap and dependency installation"
+
+- name: Include subtask
+  include_tasks: tasks/installation.yml
+
+- name: PASSWD START
+  include_tasks: tasks/Password.yml
+
+- name: Password start
+  debug:
+    msg: "Password start"
+
+- name: LDAP add 1
+  debug:
+    msg: "LDAP add start 1"
+
+- name: LDAP add 1
+  include_tasks: tasks/ldapadd.yml
+
+- name: wgetler start
+  debug:
+    msg: "wgetler start"
+
+- name: wgetler start
+  include_tasks: tasks/wgetleriAL.yml
+
+- name: CURDBNU START
+  include_tasks: tasks/CURDBNU.yml
+
+- name: CURDBNU start
+  debug:
+    msg: "CURDBNU start"
+
+- name: LDAP add 3
+  debug:
+    msg: "LDAP add start 3"
+
+- name: LDAP add 3
+  include_tasks: tasks/ldapadd3.yml
+
+- name: Set config and admin passwords
+  debug:
+    msg: "Seting config and admin passwords"
+
+- name: Transfer the bash script template to the remote host
+  template:
+    src: sh2.sh.j2
+    dest: /tmp/sh2.sh
+    mode: "0755"  # Make the script executable
+  become: true
+
+- name: Execute the script
+  shell: 
+    cmd: /tmp/sh2.sh
+  become: yes
+
+- name: SON SH ÇALIŞTI
+  debug:
+    msg: "SON SH ÇALIŞTI"
+
+- name: LDAP add 4
+  debug:
+    msg: "LDAP add start 4"
+
+- name: LDAP add 4
+  include_tasks: tasks/ldapadd4.yml
+
+
+
+
+

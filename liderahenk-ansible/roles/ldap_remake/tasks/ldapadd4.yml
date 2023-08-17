@@ -1,0 +1,15 @@
+- name: Add ppolicy schema
+  shell: |
+    ldapmodify -Y EXTERNAL -H ldapi:/// << EOL
+    dn: olcDatabase={-1}frontend,cn=config
+    changetype: modify
+    replace: olcSizeLimit
+    olcSizeLimit: 5000
+    EOL
+
+# systemctl restart slapd.service
+
+- name: Restart slapd Service
+  systemd:
+    name: slapd
+    state: restarted

@@ -1,3 +1,6 @@
 ---
 - name: Create Folder
   include_tasks: test.yml
+
+- name: deneme 02
+  include_tasks: test02.yml

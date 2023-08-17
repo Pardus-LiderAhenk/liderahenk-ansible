@@ -1,0 +1,93 @@
+- name: Print message
+  debug:
+    msg: "{{ NEW_CONFIG_PASSWD }}"
+
+- name: Print message
+  debug:
+    msg: "{{ CNCONFIGADMINPASSWD }}"
+
+- name: Print message
+  debug:
+    msg: "{{ NEW_ADMIN_PASSWD }}"
+
+- name: Print message
+  debug:
+    msg: "{{ ADMINPASSWD }}"
+
+
+- name: Check if directory exists
+  stat:
+    path: "{{ DBPATH }}"
+  register: dir_exists
+
+- name: Create directory if it doesn't exist
+  file:
+    path: "{{ DBPATH }}"
+    state: directory
+    mode: '0755'
+    owner: openldap
+    group: openldap
+  when: not dir_exists.stat.exists
+  ignore_errors: yes
+
+- name: Print message if directory already exists
+  debug:
+    msg: "Directory {{ DBPATH }} already exists."
+  when: dir_exists.stat.exists
+
+- name: Restart LDAP Service
+  service:
+    name: slapd
+    state: restarted
+    enabled: yes
+
+- name: Run Bash script and capture CURDBNO
+  shell: |
+    ldapmodify -Y EXTERNAL -H ldapi:/// << EOL
+    dn: olcDatabase={0}config,cn=config
+    changetype: modify
+    replace: olcRootPW
+    olcRootPW: {{ NEW_CONFIG_PASSWD }}
+    EOL
+
+- name: Run Bash script and capture CURDBNO
+  shell: |
+    ldapmodify -Y EXTERNAL -H ldapi:/// << EOL
+    dn: olcDatabase={1}mdb,cn=config
+    changetype: modify
+    replace: olcRootDN
+    olcRootDN: {{ ADMINDN }}
+    EOL
+
+- name: Run Bash script and capture CURDBNO
+  shell: |
+    ldapmodify -Y EXTERNAL -H ldapi:/// << EOL
+    dn: olcDatabase={1}mdb,cn=config
+    changetype: modify
+    replace: olcSuffix
+    olcSuffix: {{ BASEDN }}
+    EOL
+
+- name: Run Bash script and capture CURDBNO
+  shell: |
+    ldapmodify -Y EXTERNAL -H ldapi:/// << EOL
+    dn: olcDatabase={1}mdb,cn=config
+    changetype: modify
+    replace: olcRootPW
+    olcRootPW: {{ NEW_ADMIN_PASSWD }}
+    EOL
+
+- name: Run Bash script and capture CURDBNO
+  shell: |
+    ldapmodify -Y EXTERNAL -H ldapi:/// << EOL
+    dn: cn=config
+    replace: olcAuthzRegexp
+    olcAuthzRegexp: {0}uid=([^,]*),cn=[^,]*,cn=auth  ldap:///{{ BASEDN }}??sub?(uid=\$1)
+    -
+    replace: olcSizeLimit
+    olcSizeLimit: 10000
+    EOL
+
+- name: Run Bash script and capture CURDBNO
+  shell: |
+    ldapadd -x -D "{{ CNCONFIGADMINDN }}" -f /etc/ldap/schema/ppolicy.ldif -w {{ CNCONFIGADMINPASSWD }}

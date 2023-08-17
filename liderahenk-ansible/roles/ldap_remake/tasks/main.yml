@@ -1,0 +1,3 @@
+---
+- name: Install LDAP
+  include_tasks: ldap_start.yml

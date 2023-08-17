@@ -1,4 +1,3 @@
-
 BASEDN: "dc=liderahenk,dc=org"
 CNAME: "liderahenk.org"
 BASECN: "liderahenk"
@@ -21,10 +20,22 @@ SIMPLELDAPUSER: "test_ldap_user"
 TESTLDAPUSERPWD: "1"
 NEWCONFIGPWD: "1"
 NEWADMINPWD: "1"
+
 USERDN: "ou=Users,dc=liderahenk,dc=org"
 ADMINDN: "cn=admin,dc=liderahenk,dc=org"
 ADMINPASSWD: "1"
+
+
+ADMINDN: "{{ ADMINCN }},{{ BASEDN }}"
+
+GROUPDN: "ou=Groups,{{ BASEDN }}"
+USERDN: "ou=Users,{{ BASEDN }}"
+AGENTDN: "ou=Agents,{{ BASEDN }}"
+AGENTGROUPDN: "ou=Agent,{{ GROUPDN }}"
+USERGROUPDN: "ou=User,{{ GROUPDN }}"
+ADMINGROUPDN: "cn=adminGroups,{{ USERGROUPDN }}"
+DOMAINADMINGROUPDN: "cn=domainAdminGroup,{{ USERGROUPDN }}"
+ROLEGROUPDN: "ou=Role,{{ GROUPDN }}"
+POLICYGROUPDN: "ou=Policies,{{ GROUPDN }}"
+DEFAULTPOLICYDN: "cn=Default Password Policy,{{ POLICYGROUPDN }}"
 DBPATH: "/var/ldaps/{{ CNAME }}"
-
-XXX : "XXXDOMATES"
-

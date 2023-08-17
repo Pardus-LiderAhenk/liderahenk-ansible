@@ -1,33 +1,25 @@
-- name: mariaDB için bu
-  hosts: [db_server]
-  # vars:
-  #   ansible_ssh_user: test
-  #   ansible_become: true
-  #   ansible_become_pass: 1
+- name: ldap için bu
+  hosts: [ldap_server]
   become: yes
   roles:
     - mariadb
+  vars_files:
+    - /home/test/liderahenk-ansible/roles/mariadb/vars/main.yml
 
-# - name: TEST için
-#   hosts: [file_server]
-#   # vars:
-#   #   ansible_ssh_user: test
-#   #   ansible_become: true
-#   #   ansible_become_pass: 1
-#   become: yes
-#   roles:
-#     - test01
+- name: ldap için bu
+  hosts: [ldap_server]
+  become: yes
+  roles:
+    - ldap_remake
+  vars_files:
+    - /home/test/liderahenk-ansible/roles/ldap_remake/vars/main.yml
 
-  # tasks:
-  #   - name: Ping my hosts
-  #     ansible.builtin.ping:
-  #   - name: Print message
-  #     ansible.builtin.debug:
-  #       msg: Ping is OK
-  #   - name: Install htop  (state=present is optional)
-  #     ansible.builtin.apt:
-  #       name: mariadb-server
-  #       state: present
-  #   - name: Print message
-  #     ansible.builtin.debug:
-  #       msg: htop is installed
+- name: ldap için bu
+  hosts: [ldap_server]
+  become: yes
+  roles:
+    - xmpp
+  vars_files:
+    - /home/test/liderahenk-ansible/roles/xmpp/vars/main.yml
+
+  

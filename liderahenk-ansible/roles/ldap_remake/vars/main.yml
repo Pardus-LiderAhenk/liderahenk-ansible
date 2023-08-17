@@ -1,0 +1,89 @@
+# BASEDN: "dc=liderahenk,dc=org"
+# CNAME: "liderahenk.org"
+# BASECN: "liderahenk"
+# ORGANIZATION: "liderahenk"
+# ADMINCN: "cn=admin"
+# ADMINPASSWD: "1"
+# CNCONFIGADMINDN: "cn=admin,cn=config"
+# CNCONFIGADMINPASSWD: "1"
+# LIDERCONSOLEUSER: "lider_console"
+# LIDERCONSOLEPWD: "1"
+# LIDERCONSOLEMAILADDR: "la@gmail.com"
+# LIDER_SERVER_ADDR: "192.168.56.111"
+# # AD_DOMAIN_NAME: data["ad_domain_name"]
+# # AD_HOSTNAME: data["ad_hostname"]
+# # AD_HOST: data["ad_host"]
+# # ADUSER_PWD: data["ad_user_pwd"]
+# # AD_USER_NAME: data["ad_username"]
+# # AD_PORT: data["ad_port"]
+# SIMPLELDAPUSER: "test_ldap_user"
+# TESTLDAPUSERPWD: "1"
+# NEWCONFIGPWD: "1"
+# NEWADMINPWD: "1"
+
+# USERDN: "ou=Users,dc=liderahenk,dc=org"
+# ADMINDN: "cn=admin,dc=liderahenk,dc=org"
+# ADMINPASSWD: "1"
+
+# DBPATH: "/var/ldaps/{{ CNAME }}"
+# LIDERAHENK_SCHEMA_PATH: "/tmp/liderahenk.ldif"
+SUDO_SCHEMA_PATH: "/tmp/sudo.ldif"
+
+# GROUPDN: "ou=Groups,{{ BASEDN }}"
+# USERDN: "ou=Users,{{ BASEDN }}"
+# AGENTDN: "ou=Agents,{{ BASEDN }}"
+# AGENTGROUPDN: "ou=Agent,{{ GROUPDN }}"
+# USERGROUPDN: "ou=User,{{ GROUPDN }}"
+# ADMINGROUPDN: "cn=adminGroups,{{ USERGROUPDN }}"
+# DOMAINADMINGROUPDN: "cn=domainAdminGroup,{{ USERGROUPDN }}"
+# ROLEGROUPDN: "ou=Role,{{ GROUPDN }}"
+# POLICYGROUPDN: "ou=Policies,{{ GROUPDN }}"
+# DEFAULTPOLICYDN: "cn=Default Password Policy,{{ POLICYGROUPDN }}"
+
+# LIDER_SERVER_ADDR: "{{ LIDER_SERVER_ADDR }}"
+# SIMPLELDAPUSER: "{{ SIMPLELDAPUSER }}"
+# SIMPLELDAPUSERPWD=: "1"
+
+BASEDN: "dc=liderahenk,dc=org"
+CNAME: "liderahenk.org"
+BASECN: "liderahenk"
+ORGANIZATION: "liderahenk"
+ADMINCN: "cn=admin"
+ADMINPASSWD: "1"
+CNCONFIGADMINDN: "cn=admin,cn=config"
+CNCONFIGADMINPASSWD: "1"
+LIDERCONSOLEUSER: "lider_console"
+LIDERCONSOLEPWD: "1"
+LIDERCONSOLEMAILADDR: "la@gmail.com"
+LIDER_SERVER_ADDR: "192.168.56.135"
+# AD_DOMAIN_NAME: data["ad_domain_name"]
+# AD_HOSTNAME: data["ad_hostname"]
+# AD_HOST: data["ad_host"]
+# ADUSER_PWD: data["ad_user_pwd"]
+# AD_USER_NAME: data["ad_username"]
+# AD_PORT: data["ad_port"]
+SIMPLELDAPUSER: "test_ldap_user"
+SIMPLELDAPUSERPWD: "1"
+TESTLDAPUSERPWD: "1"
+NEWCONFIGPWD: "1"
+NEWADMINPWD: "1"
+# CURDBNO_OLC: "{CURDBNO}"
+USERDN: "ou=Users,dc=liderahenk,dc=org"
+ADMINDN: "cn=admin,dc=liderahenk,dc=org"
+ADMINPASSWD: "1"
+
+LIDERAHENK_SCHEMA_PATH: "/tmp/liderahenk.ldif"
+SUDO_SCHEMA_PATH: "/tmp/sudo.ldif"
+ADMINDN: "{{ ADMINCN }},{{ BASEDN }}"
+
+GROUPDN: "ou=Groups,{{ BASEDN }}"
+USERDN: "ou=Users,{{ BASEDN }}"
+AGENTDN: "ou=Agents,{{ BASEDN }}"
+AGENTGROUPDN: "ou=Agent,{{ GROUPDN }}"
+USERGROUPDN: "ou=User,{{ GROUPDN }}"
+ADMINGROUPDN: "cn=adminGroups,{{ USERGROUPDN }}"
+DOMAINADMINGROUPDN: "cn=domainAdminGroup,{{ USERGROUPDN }}"
+ROLEGROUPDN: "ou=Role,{{ GROUPDN }}"
+POLICYGROUPDN: "ou=Policies,{{ GROUPDN }}"
+DEFAULTPOLICYDN: "cn=Default Password Policy,{{ POLICYGROUPDN }}"
+DBPATH: "/var/ldaps/{{ CNAME }}"

@@ -1,0 +1,24 @@
+- name: Run Bash script and capture CURDBNO
+  shell: |
+    ldapsearch -LLL -x -s sub -D "{{ CNCONFIGADMINDN }}" -w {{ CNCONFIGADMINPASSWD }} -b "cn=config" "(olcDatabase=*)" | egrep -o "dn: olcDatabase={([0-9]+)}mdb" | tac | egrep -o -m1 "[0-9]+"
+  register: lastdbcount_output
+  become: yes
+    
+- name: Set LASTDBCOUNT Ansible variable
+  set_fact:
+    LASTDBCOUNT: "{{ lastdbcount_output.stdout }}"
+
+- name: Run Bash script and capture CURDBNO
+  shell: |
+    expr {{ LASTDBCOUNT }}
+  register: curdbno_output
+
+- name: Set CURDBNO Ansible variable
+  set_fact:
+    CURDBNO: "{{ curdbno_output.stdout }}"
+
+- name: Restart LDAP Service
+  service:
+    name: slapd
+    state: restarted
+    enabled: yes

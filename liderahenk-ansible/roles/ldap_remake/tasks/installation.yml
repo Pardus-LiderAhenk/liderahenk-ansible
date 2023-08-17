@@ -1,0 +1,40 @@
+- name: Set DEBIAN_FRONTEND
+  shell: "export DEBIAN_FRONTEND='non-interactive'"
+
+- name: Set slapd debconf selections
+  shell: "echo '{{ item.value }}' | sudo debconf-set-selections"
+  loop:
+    - { value: "slapd slapd/root_password password 1" }
+    - { value: "slapd slapd/root_password_again password 1" }
+    - { value: "slapd slapd/generated_adminpw password 1" }
+    - { value: "slapd slapd/adminpw password 1" }
+    - { value: "slapd slapd/password1 password 1" }
+    - { value: "slapd slapd/password2 password 1" }
+    - { value: "slapd slapd/no_configuration boolean false" }
+    - { value: "slapd slapd/invalid_config false" }
+    - { value: "slapd slapd/domain string liderahenk.org" }
+    - { value: "slapd shared/organization string liderahenk" }
+    - { value: "slapd slapd/backend string MDB" }
+    - { value: "slapd slapd/purge_database boolean true" }
+    - { value: "slapd slapd/move_old_database boolean true" }
+
+- name: Install slapd and ldap-utils packages
+  shell: "sudo apt-get install -y slapd ldap-utils"
+  register: result
+
+- name: Check if packages were installed successfully
+  debug:
+    msg: "slapd and ldap-utils packages installed successfully"
+  when: result.rc == 0
+
+- name: Install python3-ldap package
+  apt:
+    name: python3-ldap, ldap-utils
+    state: present
+ 
+- name: Restart LDAP Service
+  service:
+    name: slapd
+    state: restarted
+    enabled: yes
+

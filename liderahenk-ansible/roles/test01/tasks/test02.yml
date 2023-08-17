@@ -1,0 +1,18 @@
+# - name: Display the variable value
+#   debug:
+#     msg: "The new value of the variable is: {{ LASTDBCOUNT }}"
+
+# - name: Display the variable value
+#   debug:
+#     msg: "The new value of the variable is: {{ CURDBNO }}"
+
+
+# - name: Modify LDAP Root Password
+#   community.general.ldap_entry:
+#     dn: "olcDatabase={0}config,cn=config"
+#     objectClass:
+#       - olcDatabaseConfig
+#     attributes:
+#       olcRootPW: "{{ NEW_CONFIG_PASSWD }}"
+#     bind_dn: "{{ ADMINDN }}"
+#     bind_pw: "1"

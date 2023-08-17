@@ -1,5 +1,160 @@
-- name: Change file ownership, group and permissions
-  ansible.builtin.file:
-    path: "/tmp/{{ dosya_adi }}"
-    state: directory
-    mode: '0755'
+# - name: Run Bash script and capture CURDBNO
+#   shell: |
+#     ldapsearch -LLL -x -s sub -D {{ CNCONFIGADMINDN }} -w {{ CNCONFIGADMINPASSWD }} -b "cn=config" "(olcDatabase=*)" | egrep -o "dn: olcDatabase={([0-9]+)}mdb" | tac | egrep -o -m1 "[0-9]+"
+#   register: lastdbcount_output
+    
+# - name: Set LASTDBCOUNT Ansible variable
+#   set_fact:
+#     LASTDBCOUNT: "{{ lastdbcount_output.stdout }}"
+
+# - name: Run Bash script and capture CURDBNO
+#   shell: |
+#     expr {{ LASTDBCOUNT }} + 1
+#   register: curdbno_output
+
+# - name: Set CURDBNO Ansible variable
+#   set_fact:
+#     CURDBNO: "{{ curdbno_output.stdout }}"
+
+# - name: Restart LDAP Service
+#   service:
+#     name: slapd
+#     state: restarted
+#     enabled: yes
+
+# - name: Run Bash script and capture NEW_CONFIG_PASSWD
+#   shell: |
+#     slappasswd -h {SSHA} -s {{ CNCONFIGADMINPASSWD }}
+#   register: new_config_passwd_output
+    
+# - name: Set NEW_CONFIG_PASSWD Ansible variable
+#   set_fact:
+#     NEW_CONFIG_PASSWD: "{{ new_config_passwd_output.stdout }}"
+
+# - name: Run Bash script and capture NEW_ADMIN_PASSWD
+#   shell: |
+#     slappasswd -h {SSHA} -s {{ ADMINPASSWD }}
+#   register: new_admin_passwd_output
+    
+# - name: Set NEW_ADMIN_PASSWD Ansible variable
+#   set_fact:
+#     NEW_ADMIN_PASSWD: "{{ new_admin_passwd_output.stdout }}"
+
+# # kotrol et
+
+# # - name: Create directory DBPATH
+# #   file:
+# #     path: "{{ DBPATH }}"
+# #     state: directory
+# #     mode: '0755'
+# #     owner: openldap
+# #     group: openldap
+
+
+# - name: Check if directory exists
+#   stat:
+#     path: "{{ DBPATH }}"
+#   register: dir_exists
+
+# - name: Create directory if it doesn't exist
+#   file:
+#     path: "{{ DBPATH }}"
+#     state: directory
+#     mode: '0755'
+#     owner: openldap
+#     group: openldap
+#   when: not dir_exists.stat.exists
+#   ignore_errors: yes
+
+# - name: Print message if directory already exists
+#   debug:
+#     msg: "Directory {{ DBPATH }} already exists."
+#   when: dir_exists.stat.exists
+
+
+
+
+# # - name: Display the variable value
+# #   debug:
+# #     msg: "The new value of the variable is: {{ LASTDBCOUNT }}"
+
+# # #  echo $LASTDBCOUNT
+
+# # - name: Run a command and capture output
+# #   shell: echo "Hello, Ansible!"
+# #   register: command_output
+
+# # - name: Display captured output
+# #   debug:
+# #     var: command_output.stdout
+
+# # - name: Run Bash script and capture CURDBNO
+# #   shell: |
+# #     ldapsearch -LLL -x -s sub -D {{ CNCONFIGADMINDN }} -w {{ CNCONFIGADMINPASSWD }} -b "cn=config" "(olcDatabase=*)" | egrep -o "dn: olcDatabase={([0-9]+)}mdb" | tac | egrep -o -m1 "[0-9]+"
+# #   register: lastdbcount_output
+
+# # - name: Set LASTDBCOUNT Ansible variable
+# #   set_fact:
+# #     XXX: "{{ lastdbcount_output.stdout }}"
+
+# # - name: Set the variable
+# #   set_fact:
+# #     LASTDBCOUNT: "ThisIsNewValue"
+
+# # - name: Display the variable value
+# #   debug:
+# #     msg: "The new value of the variable is: {{ LASTDBCOUNT }}"
+
+# - name: Restart LDAP Service
+#   service:
+#     name: slapd
+#     state: restarted
+#     enabled: yes
+
+# # - name: Modify olcRootPW using ldap_attr
+# #   community.general.ldap_attr:
+# #     dn: olcDatabase={0}config,cn=config
+# #     name: olcRootPW
+# #     state: present
+# #     values: "1"
+# #     bind_dn: "{{ ADMINDN }}"
+# #     bind_pw: "1"
+
+# # - name: Modify olcModuleLoad using ldap_attr
+# #   community.general.ldap_attr:
+# #     dn: cn=module{0},cn=config
+# #     name: olcModuleLoad
+# #     state: present
+# #     values:
+# #       - unique
+# #       - ppolicy
+# #       - memberof
+# #       - pw-argon2
+# #     bind_dn: "{{ ADMINDN }}"
+# #     bind_pw: "1"
+
+# # - name: Modify LDAP Root Password
+# #   community.general.ldap_entry:
+# #     dn: "olcDatabase={0}config,cn=config"
+# #     attributes:
+# #       olcRootPW: "{{ NEW_CONFIG_PASSWD }}"
+# #     bind_dn: "{{ ADMINDN }}"
+# #     bind_pw: "1"
+
+# # - name: Modify LDAP Root Password
+# #   community.general.ldap_entry:
+# #     dn: "olcDatabase={0}config,cn=config"
+# #     objectClass:
+# #       - olcDatabaseConfig
+# #     attributes:
+# #       olcRootPW: "{{ NEW_CONFIG_PASSWD }}"
+# #     bind_dn: "{{ ADMINDN }}"
+# #     bind_pw: "1"
+# - name: Pass curly braces as parameter
+#   debug:
+#     msg: "agah {%raw%}{{%endraw%}{{ XXX }}{%raw%}}{%endraw%} sajkdlakjsdlsj"
+
+
+# ldapmodify -Y EXTERNAL -H ldapi:/// << EOL
+# dn: olcDatabase={1}mdb,cn=config changetype: modify add: olcAccess olcAccess: {0}to attrs=userPassword,shadowLastChange by group.exact="$ADMINGROUPDN" write by anonymous auth by self writeolcAccess: {9}to dn.base="$BASEDN" by * read by * breakolcAccess: {10}to dn.base="$USERDN" by * read by * breakolcAccess: {11}to dn.base="$AGENTDN" by * read by * breakolcAccess: {12}to dn.base="$POLICYGROUPDN" by * read by * breakolcAccess: {13}to dn.base="$GROUPDN" by * read by * breakolcAccess: {14}to dn.base="$USERGROUPDN" by * read by * breakolcAccess: {15}to dn.base="$AGENTGROUPDN" by * read by * breakolcAccess: {16}to dn.base="$ROLEGROUPDN" by * read by * breakolcAccess: {17}to * by self writeolcAccess: {1}to dn.subtree="$ROLEGROUPDN" by dn.subtree="$AGENTDN" read by * breakolcAccess: {2}to dn.subtree="$USERDN" by dn.subtree="$AGENTDN" read by * breakolcAccess: {3}to dn.subtree="ou=Users,dc=liderahenk,dc=org" by group.exact="cn=adminGroups,ou=User,ou=Groups,dc=liderahenk,dc=org" write by * breakolcAccess: {4}to dn.subtree="ou=Agents,dc=liderahenk,dc=org" by group.exact="cn=adminGroups,ou=User,ou=Groups,dc=liderahenk,dc=org" write by * breakolcAccess: {5}to dn.subtree="ou=Policies,ou=Groups,dc=liderahenk,dc=org" by group.exact="cn=adminGroups,ou=User,ou=Groups,dc=liderahenk,dc=org" write by * breakolcAccess: {6}to dn.subtree="ou=User,ou=Groups,dc=liderahenk,dc=org" by group.exact="cn=adminGroups,ou=User,ou=Groups,dc=liderahenk,dc=org" write by * breakolcAccess: {7}to dn.subtree="ou=Role,ou=Groups,dc=liderahenk,dc=org" by group.exact="cn=adminGroups,ou=User,ou=Groups,dc=liderahenk,dc=org" write by * breakolcAccess: {8}to dn.subtree="ou=Agent,ou=Groups,dc=liderahenk,dc=org" by group.exact="cn=adminGroups,ou=User,ou=Groups,dc=liderahenk,dc=org" write by * break 
+# EOL

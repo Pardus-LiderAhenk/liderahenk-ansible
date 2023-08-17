@@ -1,0 +1,77 @@
+- name: Admin register
+  shell: |
+    sudo wget https://repo.liderahenk.org/liderahenk-archive-keyring.asc && sudo apt-key add liderahenk-archive-keyring.asc &&  rm liderahenk-archive-keyring.asc
+  become: true
+
+- name: Admin register
+  shell: |
+    sudo printf  "deb [arch=amd64] https://repo.liderahenk.org/liderahenk stable main" | sudo tee -a /etc/apt/sources.list
+  become: true
+
+- name: Update package cache
+  become: true
+  apt:
+    update_cache: yes
+
+- name: Install XMPP package
+  apt:
+    name:
+      - ejabberd=19.09.1-0
+    state: present
+
+- name: Transfer the bash script template to the remote host
+  template:
+    src: ejabberd.yml.j2
+    dest: /opt/ejabberd/conf/ejabberd.yml
+    mode: "0755"  # Make the script executable
+  become: true
+
+- name: Restart XMPP Service
+  service:
+    name: ejabberd
+    state: restarted
+    enabled: yes
+
+- name: Admin register
+  shell: |
+    /opt/ejabberd-19.09.1/bin/ejabberdctl register {{ ADMINUSERNAME }} {{ SERVICE_NAME }} {{ ADMINPASSWORD }}
+  become: true
+
+- name: Lider_sunucu register
+  shell: |
+    /opt/ejabberd-19.09.1/bin/ejabberdctl register {{ LIDERUSERNAME }} {{ SERVICE_NAME }} {{ LIDERPASSWORD }}
+  become: true
+
+- name: Restart XMPP Service
+  service:
+    name: ejabberd
+    state: restarted
+    enabled: yes
+
+- name: Admin register
+  shell: |
+    sudo apt-mark hold ejabberd
+  become: true
+
+- name: Admin register
+  shell: |
+    sudo cp /opt/ejabberd-19.09.1/bin/ejabberd.service /etc/systemd/system/
+  become: true
+
+- name: Reload systemd daemon
+  become: true
+  systemd:
+    daemon_reload: yes
+
+- name: Enable ejabberd service
+  become: true
+  systemd:
+    name: ejabberd
+    enabled: yes
+
+- name: Remove ejabberd.yml file
+  become: true
+  file:
+    path: /tmp/ejabberd.yml
+    state: absent
+
